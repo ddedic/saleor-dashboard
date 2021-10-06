@@ -12,13 +12,24 @@ export function createCheckout({
   variantsList,
   address,
   billingAddress,
-  auth = "auth"
+  auth = "auth",
+  returnAvailableCollectionPoints = false
 }) {
   const lines = getVariantsLines(variantsList, productQuantity);
   const shippingAddress = getDefaultAddress(address, "shippingAddress");
   const billingAddressLines = getDefaultAddress(
     billingAddress,
     "billingAddress"
+  );
+
+  const availableCollectionPointsLines = getValueWithDefault(
+    returnAvailableCollectionPoints,
+    `availableCollectionPoints{
+    id
+    name
+    clickAndCollectOption
+    isPrivate
+  }`
   );
 
   const mutation = `mutation{
@@ -33,13 +44,13 @@ export function createCheckout({
         field
         message
       }
-
       created
       checkout{
         id
         availableShippingMethods{
           name
         }
+        ${availableCollectionPointsLines}
       }
     }
   }`;
@@ -101,6 +112,12 @@ export function completeCheckout(checkoutId, paymentData) {
     checkoutComplete(checkoutId:"${checkoutId}" ${paymentDataLine}){
       order{
         id
+        paymentStatus
+        total{
+          gross{
+            amount
+          }
+        }
       }
       confirmationNeeded
       confirmationData
@@ -123,6 +140,7 @@ export function addVoucher(checkoutId, voucherCode) {
         message
       }
       checkout{
+        id
         totalPrice{
           gross{
             amount
