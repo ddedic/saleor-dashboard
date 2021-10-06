@@ -105,6 +105,7 @@ module.exports = speedMeasureWrapper((env, argv) => {
 
   return {
     devServer: {
+      disableHostCheck: true,
       compress: true,
       contentBase: path.join(__dirname, dashboardBuildPath),
       historyApiFallback: true,
