@@ -3,6 +3,7 @@ import saleorDarkLogo from "@assets/images/logo-dark.svg";
 import saleorLightLogo from "@assets/images/logo-light.svg";
 import { useTheme } from "@saleor/macaw-ui";
 import { makeStyles } from "@saleor/macaw-ui";
+import useShop from "@saleor/hooks/useShop";
 import React from "react";
 import SVG from "react-inlinesvg";
 
@@ -61,6 +62,14 @@ const useStyles = makeStyles(
       "& svg": {
         width: "100%"
       }
+    },
+    logoTitle: {
+      display: "flex",
+      alignItems: "center",
+      "& span": {
+        display: "flex",
+        flex: 1
+      }
     }
   }),
   {
@@ -73,6 +82,8 @@ const Layout: React.FC = props => {
 
   const classes = useStyles(props);
   const { themeType } = useTheme();
+  // const shop = useShop();
+  const shop = null;
 
   return (
     <div className={classes.root}>
@@ -81,10 +92,13 @@ const Layout: React.FC = props => {
       </div>
       <div className={classes.mainPanel}>
         <div className={classes.mainPanelContent}>
-          <SVG
-            className={classes.logo}
-            src={themeType === "dark" ? saleorDarkLogo : saleorLightLogo}
-          />
+          <div className={classes.logoTitle}>
+            <SVG
+              className={classes.logo}
+              src={themeType === "dark" ? saleorDarkLogo : saleorLightLogo}
+            />
+            {shop?.name && <h3>{shop.name}</h3>}
+          </div>
           {children}
         </div>
       </div>

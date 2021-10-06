@@ -72,6 +72,25 @@ import { PermissionEnum } from "./types/globalTypes";
 import WarehouseSection from "./warehouses";
 import { warehouseSection } from "./warehouses/urls";
 
+console.log("******* ENV API_URL ********", API_URI);
+
+const makeGraphQLUri = () => {
+  try {
+    const origin = window.location.origin;
+
+    const arr = origin.split(":");
+    const GRAPHQL_URI = arr[0] + ":" + arr[1] + ":8000/graphql/";
+
+    return GRAPHQL_URI;
+  } catch (e) {
+    console.log("* Problem while getting API_URL...", e.message);
+    return API_URI;
+  }
+};
+
+const HOST_API_URL = makeGraphQLUri();
+console.log("******* HOST API_URL ********", HOST_API_URL);
+
 if (process.env.GTM_ID) {
   TagManager.initialize({ gtmId: GTM_ID });
 }
@@ -83,13 +102,15 @@ errorTracker.init();
 // so we need to explicitly set them
 const linkOptions = {
   credentials: "include",
-  uri: API_URI
+  uri: HOST_API_URL ?? API_URI
 };
 const uploadLink = createUploadLink(linkOptions);
 const batchLink = new BatchHttpLink({
   batchInterval: 100,
   ...linkOptions
 });
+
+console.log("******* LINK_OPTIONS ********", linkOptions);
 
 const link = ApolloLink.split(
   operation => operation.getContext().useBatching,
